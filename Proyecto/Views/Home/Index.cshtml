@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Sistema de Gestión de Riesgos Cibernéticos</h1>
+
+    <div class="row justify-content-center">
+        <!-- Tarjeta para Activos -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Gestión de Activos</h5>
+                    <p class="card-text">Registra y clasifica tus activos de información.</p>
+                    <a asp-controller="Activos" asp-action="Index" class="btn btn-light">Ir a Activos</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta para Riesgos -->
+        <div class="col-md-4">
+            <div class="card text-white bg-danger mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Identificación de Riesgos</h5>
+                    <p class="card-text">Registra amenazas y analiza riesgos asociados a tus activos.</p>
+                    <a asp-controller="Riesgos" asp-action="Index" class="btn btn-light">Ir a Riesgos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+﻿@model Proyecto.Models.Control
+@{
+    ViewData["Title"] = "Registrar Control";
+    var riesgos = ViewBag.Riesgos as List<Proyecto.Models.Riesgo>;
+}
+
+<h2>Registrar Nuevo Control</h2>
+
+<   form asp-action="Create">
+    <div class="form-group">
+        <label>Riesgo Asociado</label>
+        <select asp-for="RiesgoId" class="form-control">
+            @foreach (var r in riesgos)
+            {
+                <option value="@r.Id">@r.Amenaza - (@r.Activo?.Nombre)</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Estrategia</label>
+        <select asp-for="Estrategia" class="form-control">
+            <option>Mitigar</option>
+            <option>Aceptar</option>
+            <option>Transferir</option>
+            <option>Evitar</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Descripción</label>
+        <textarea asp-for="Descripcion" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Responsable</label>
+        <input asp-for="Responsable" class="form-control" />
+    </div>
+    <button type="submit" class="btn

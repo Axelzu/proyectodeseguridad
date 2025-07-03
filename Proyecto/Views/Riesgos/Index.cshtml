@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Proyecto.Models.Riesgo>
+
+@{
+    ViewData["Title"] = "Listado de Riesgos";
+}
+
+<h2>Riesgos registrados</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Registrar nuevo riesgo</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Activo</th>
+            <th>Amenaza</th>
+            <th>Vulnerabilidad</th>
+            <th>Controles Existentes</th>
+            <th>Probabilidad</th>
+            <th>Impacto</th>
+            <th>Nivel de Riesgo</th>
+            <th>Clasificación</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Activo.Nombre</td>
+                <td>@item.Amenaza</td>
+                <td>@item.Vulnerabilidad</td>
+                <td>@item.ControlesExistentes</td>
+                <td>@item.Probabilidad</td>
+                <td>@item.Impacto</td>
+                <td>@item.NivelRiesgo</td>
+                <td>@item.ClasificacionRiesgo</td>
+            </tr>
+        }
+    </tbody>
+</table>

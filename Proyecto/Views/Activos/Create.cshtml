@@ -1,0 +1,30 @@
+﻿@model Proyecto.Models.Activo
+@{
+    ViewData["Title"] = "Crear Activo";
+}
+
+<h2>Registrar Nuevo Activo</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label>Nombre</label>
+        <input asp-for="Nombre" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Tipo</label>
+        <select asp-for="Tipo" class="form-control">
+            <option>Físico</option>
+            <option>Software</option>
+            <option>Red</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Clasificación CIA</label>
+        <input asp-for="ClasificacionCIA" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Valor</label>
+        <input asp-for="Valor" class="form-control" type="number" step="0.01" />
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Guardar</button>
+</form>
