@@ -1,0 +1,17 @@
+﻿@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "Agrupar Activo";
+}
+
+<h2>Activos agrupados por Categoría</h2>
+
+@foreach (var grupo in Model)
+{
+    <h3>@grupo.Categoria</h3>
+    <ul>
+        @foreach (var activo in grupo.Activos)
+        {
+            <li>@activo.Nombre (@activo.Valor.ToString("C"))</li>
+        }
+    </ul>
+}

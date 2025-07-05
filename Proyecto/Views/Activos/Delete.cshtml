@@ -1,0 +1,19 @@
+﻿@model Proyecto.Models.Activo
+@{
+    ViewData["Title"] = "Eliminar Activo";
+}
+
+
+<h2>¿Estás seguro que deseas eliminar este activo?</h2>
+
+<div>
+    <strong>Nombre:</strong> @Model.Nombre<br />
+    <strong>Valor:</strong> @Model.Valor.ToString("C")
+</div>
+
+<form asp-action="DeleteConfirmed">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

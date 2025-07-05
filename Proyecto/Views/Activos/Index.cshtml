@@ -3,16 +3,15 @@
     ViewData["Title"] = "Activos";
 }
 
-<h2>Activos de Información</h2>
-<a href="/Activos/Create" class="btn btn-primary">Nuevo Activo</a>
-<table class="table mt-3">
+<h2>Lista de Activos</h2>
+
+<table class="table">
     <thead>
         <tr>
             <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Clasificación CIA</th>
+            <th>Categoría</th>
             <th>Valor</th>
-            <th></th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -20,11 +19,16 @@
         {
             <tr>
                 <td>@item.Nombre</td>
-                <td>@item.Tipo</td>
-                <td>@item.ClasificacionCIA</td>
-                <td>$@item.Valor</td>
-                <td><a href="/Activos/Delete/@item.Id" class="btn btn-danger btn-sm">Eliminar</a></td>
+                <td>@item.Categoria</td>
+                <td>@item.Valor.ToString("C")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Ver</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+<a asp-action="Create" class="btn btn-primary">Nuevo Activo</a>

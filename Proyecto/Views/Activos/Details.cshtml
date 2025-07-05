@@ -1,0 +1,18 @@
+﻿@model Proyecto.Models.Activo
+@{
+    ViewData["Title"] = "Detalles Activo";
+}
+
+<h2>Detalles del Activo</h2>
+
+<ul>
+    <li><strong>Nombre:</strong> @Model.Nombre</li>
+    <li><strong>Descripción:</strong> @Model.Descripcion</li>
+    <li><strong>Fecha:</strong> @Model.FechaRegistro.ToShortDateString()</li>
+    <li><strong>Valor:</strong> @Model.Valor.ToString("C")</li>
+    <li><strong>Categoría:</strong> @Model.Categoria</li>
+    <li><strong>Disponible:</strong> @(Model.ActivoDisponible ? "Sí" : "No")</li>
+</ul>
+
+<a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+<a asp-action="Index">Volver</a>

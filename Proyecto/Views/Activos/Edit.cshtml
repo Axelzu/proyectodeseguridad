@@ -1,0 +1,15 @@
+﻿@model Proyecto.Models.Activo
+@{
+    ViewData["Title"] = "Editar Activo";
+}
+
+<h2>Editar Activo</h2>
+
+<form asp-action="Edit">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <!-- Reutiliza campos como en Create.cshtml -->
+
+    <button type="submit" class="btn btn-warning">Actualizar</button>
+</form>
