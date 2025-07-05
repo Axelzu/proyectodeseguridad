@@ -8,7 +8,7 @@ namespace Proyecto.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Activo> Activos => Set<Activo>();
+        public DbSet<Activo> Activos { get; set; }
         public DbSet<Riesgo> Riesgos { get; set; }
 
         public DbSet<Control> Controles => Set<Control>();

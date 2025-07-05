@@ -1,0 +1,25 @@
+﻿@model Proyecto.Models.Riesgo
+@{
+	ViewData["Title"] = "Detalles del Riesgo";
+}
+
+<h2>Detalles del Riesgo</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Amenaza</h5>
+        <p><strong>Activo:</strong> @Model.Activo.Nombre</p>
+        <p><strong>Vulnerabilidad:</strong> @Model.Vulnerabilidad</p>
+        <p><strong>Controles:</strong> @Model.ControlesExistentes</p>
+        <p><strong>Probabilidad:</strong> @Model.Probabilidad</p>
+        <p><strong>Impacto:</strong> @Model.Impacto</p>
+        <p><strong>Nivel de Riesgo:</strong> @Model.NivelRiesgo</p>
+        <p><strong>Clasificación:</strong> @Model.ClasificacionRiesgo</p>
+        <p><strong>Observaciones:</strong> @Model.Observaciones</p>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</p>

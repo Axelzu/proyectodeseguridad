@@ -4,23 +4,23 @@
     ViewData["Title"] = "Listado de Riesgos";
 }
 
-<h2>Riesgos registrados</h2>
+<h2>Listado de Riesgos</h2>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Registrar nuevo riesgo</a>
+    <a asp-action="Create" class="btn btn-primary">Nuevo Riesgo</a>
 </p>
 
-<table class="table table-striped">
+<table class="table">
     <thead>
         <tr>
             <th>Activo</th>
             <th>Amenaza</th>
             <th>Vulnerabilidad</th>
-            <th>Controles Existentes</th>
             <th>Probabilidad</th>
             <th>Impacto</th>
             <th>Nivel de Riesgo</th>
             <th>Clasificación</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -30,11 +30,15 @@
                 <td>@item.Activo.Nombre</td>
                 <td>@item.Amenaza</td>
                 <td>@item.Vulnerabilidad</td>
-                <td>@item.ControlesExistentes</td>
                 <td>@item.Probabilidad</td>
                 <td>@item.Impacto</td>
                 <td>@item.NivelRiesgo</td>
                 <td>@item.ClasificacionRiesgo</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Ver</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                </td>
             </tr>
         }
     </tbody>

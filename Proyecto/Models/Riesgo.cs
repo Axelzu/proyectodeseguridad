@@ -11,7 +11,7 @@ namespace Proyecto.Models
         [Required(ErrorMessage = "Debe seleccionar un activo")]
         public int ActivoId { get; set; }
 
-        [ForeignKey("ActivoId")]
+        [ForeignKey(nameof(ActivoId))]
         public Activo Activo { get; set; }
 
         [Required(ErrorMessage = "La amenaza es obligatoria")]
@@ -26,12 +26,14 @@ namespace Proyecto.Models
         public string ControlesExistentes { get; set; }
 
         [Required(ErrorMessage = "La probabilidad es obligatoria")]
-        [Range(0, 1, ErrorMessage = "La probabilidad debe ser un valor entre 0 y 1")]
-        public decimal Probabilidad { get; set; }  // Valor entre 0 y 1
+        [Range(0.0, 1.0, ErrorMessage = "La probabilidad debe estar entre 0 y 1")]
+        [Column(TypeName = "decimal(3,2)")]
+        public decimal Probabilidad { get; set; }
 
         [Required(ErrorMessage = "El impacto es obligatorio")]
-        [Range(0, 100, ErrorMessage = "El impacto debe ser un valor entre 0 y 100")]
-        public decimal Impacto { get; set; } // Valor numérico del impacto
+        [Range(0.0, 100.0, ErrorMessage = "El impacto debe estar entre 0 y 100")]
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal Impacto { get; set; }
 
         [NotMapped]
         public decimal NivelRiesgo => Probabilidad * Impacto;
