@@ -1,0 +1,32 @@
+﻿@model Proyecto.Models.Observacion
+@{
+    ViewData["Title"] = "Añadir Observación";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="RiesgoId" />
+
+    <div class="form-group">
+        <label asp-for="Texto"></label>
+        <textarea asp-for="Texto" class="form-control"></textarea>
+        <span asp-validation-for="Texto" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Autor"></label>
+        <input asp-for="Autor" class="form-control" />
+        <span asp-validation-for="Autor" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a asp-controller="Riesgos" asp-action="Details" asp-route-id="@Model.RiesgoId" class="btn btn-secondary">Volver</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -18,12 +18,44 @@ namespace Proyecto.Controllers
         }
 
         // GET: Riesgos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search, int page = 1, int pageSize = 10)
         {
-            var riesgos = _context.Riesgos
-                                  .Include(r => r.Activo);
-            return View(await riesgos.ToListAsync());
+            // 1) Base query con Include
+            var query = _context.Riesgos
+                                .Include(r => r.Activo)
+                                .AsQueryable();
+
+            // 2) Filtro
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(r =>
+                    r.Activo.Nombre.Contains(search) ||
+                    r.Amenaza.Contains(search));
+            }
+
+            // 3) Conteo total
+            var total = await query.CountAsync();
+
+            // 4) Paginación
+            var items = await query
+                .OrderBy(r => r.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // 5) Construir ViewModel
+            var vm = new RiesgosIndexViewModel
+            {
+                Riesgos = items,
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalItems = total,
+                Search = search
+            };
+
+            return View(vm);
         }
+
 
         // GET: Riesgos/Details/5
         public async Task<IActionResult> Details(int? id)

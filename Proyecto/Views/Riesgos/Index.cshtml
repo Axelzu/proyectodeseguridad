@@ -1,16 +1,34 @@
-﻿@model IEnumerable<Proyecto.Models.Riesgo>
+﻿@model Proyecto.Models.RiesgosIndexViewModel
 
 @{
     ViewData["Title"] = "Listado de Riesgos";
 }
 
-<h2>Listado de Riesgos</h2>
+<h2>@ViewData["Title"]</h2>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input type="text"
+               name="search"
+               value="@Model.Search"
+               class="form-control"
+               placeholder="Buscar por activo o amenaza" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-secondary">
+            Filtrar
+        </button>
+    </div>
+</form>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Nuevo Riesgo</a>
+    <a asp-controller="Reports" asp-action="RiesgosCsv" class="btn btn-info ms-2">
+        Exportar CSV
+    </a>
 </p>
 
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Activo</th>
@@ -20,11 +38,13 @@
             <th>Impacto</th>
             <th>Nivel de Riesgo</th>
             <th>Clasificación</th>
+            <th>Controles</th>
+            <th>Observaciones</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Riesgos)
         {
             <tr>
                 <td>@item.Activo.Nombre</td>
@@ -35,6 +55,22 @@
                 <td>@item.NivelRiesgo</td>
                 <td>@item.ClasificacionRiesgo</td>
                 <td>
+                    <a asp-controller="Controles"
+                       asp-action="Index"
+                       asp-route-riesgoId="@item.Id"
+                       class="btn btn-sm btn-outline-secondary">
+                        Ver
+                    </a>
+                </td>
+                <td>
+                    <a asp-controller="Observaciones"
+                       asp-action="Index"
+                       asp-route-r="@item.Id"
+                       class="btn btn-sm btn-outline-secondary">
+                        Ver
+                    </a>
+                </td>
+                <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Ver</a> |
                     <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
@@ -43,3 +79,41 @@
         }
     </tbody>
 </table>
+
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+            <a class="page-link" href="?search=@Model.Search&page=1">
+                « Primera
+            </a>
+        </li>
+        <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+            <a class="page-link"
+               href="?search=@Model.Search&page=@(Model.PageNumber - 1)">
+                ‹ Anterior
+            </a>
+        </li>
+
+        @for (int p = 1; p <= Model.TotalPages; p++)
+        {
+            <li class="page-item @(p == Model.PageNumber ? "active" : "")">
+                <a class="page-link" href="?search=@Model.Search&page=@p">
+                    @p
+                </a>
+            </li>
+        }
+
+        <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="?search=@Model.Search&page=@(Model.PageNumber + 1)">
+                Siguiente ›
+            </a>
+        </li>
+        <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="?search=@Model.Search&page=@Model.TotalPages">
+                Última »
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Proyecto.Models
@@ -49,7 +50,8 @@ namespace Proyecto.Models
             }
         }
 
-        [StringLength(300)]
-        public string Observaciones { get; set; }
+        // Navegaciones a los controles aplicados (tratamientos) y observaciones
+        public ICollection<Control> Controles { get; set; } = new List<Control>();
+        public ICollection<Observacion> Observaciones { get; set; } = new List<Observacion>();
     }
 }
