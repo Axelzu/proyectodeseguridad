@@ -1,0 +1,76 @@
+﻿@model Proyecto.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Panel de Monitoreo";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row text-white mb-4">
+    <div class="col-md-3">
+        <div class="card bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">Riesgos Alto</h5>
+                <p class="card-text display-4">@Model.RiesgosAlto</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Riesgos Medio</h5>
+                <p class="card-text display-4">@Model.RiesgosMedio</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Riesgos Bajo</h5>
+                <p class="card-text display-4">@Model.RiesgosBajo</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Total Riesgos</h5>
+                <p class="card-text display-4">@Model.TotalRiesgos</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4>Top 10 Riesgos por nivel original</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Activo</th>
+            <th>Amenaza</th>
+            <th>Nivel Original</th>
+            <th>Controles</th>
+            <th>Mejor Nivel Residual</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model.Items)
+        {
+            <tr>
+                <td>@i.ActivoNombre</td>
+                <td>@i.Amenaza</td>
+                <td>@i.NivelRiesgo</td>
+                <td>@i.ControlesCount</td>
+                <td>@i.NivelResidual</td>
+                <td>
+                    <a asp-controller="Riesgos"
+                       asp-action="Details"
+                       asp-route-id="@i.Id"
+                       class="btn btn-sm btn-primary">
+                        Ver Detalle
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
