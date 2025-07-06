@@ -1,36 +1,52 @@
 ﻿@model Proyecto.Models.Control
 @{
-    ViewData["Title"] = "Registrar Control";
-    var riesgos = ViewBag.Riesgos as List<Proyecto.Models.Riesgo>;
+	ViewData["Title"] = "Registrar Control";
 }
 
-<h2>Registrar Nuevo Control</h2>
+@{
+    ViewData["Title"] = "Proponer Tratamiento de Riesgo";
+}
 
-<   form asp-action="Create">
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create">
+    @Html.AntiForgeryToken()
+
     <div class="form-group">
-        <label>Riesgo Asociado</label>
-        <select asp-for="RiesgoId" class="form-control">
-            @foreach (var r in riesgos)
-            {
-                <option value="@r.Id">@r.Amenaza - (@r.Activo?.Nombre)</option>
-            }
-        </select>
+        <label asp-for="RiesgoId">Riesgo</label>
+        <select asp-for="RiesgoId" asp-items="ViewBag.Riesgos" class="form-control"></select>
+        <span asp-validation-for="RiesgoId" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label>Estrategia</label>
-        <select asp-for="Estrategia" class="form-control">
-            <option>Mitigar</option>
-            <option>Aceptar</option>
-            <option>Transferir</option>
-            <option>Evitar</option>
-        </select>
+        <label asp-for="Estrategia">Estrategia de Respuesta</label>
+        <select asp-for="Estrategia" asp-items="ViewBag.Estrategias" class="form-control"></select>
+        <span asp-validation-for="Estrategia" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label>Descripción</label>
-        <textarea asp-for="Descripcion" class="form-control"></textarea>
+        <label asp-for="ControlesPropuestos"></label>
+        <textarea asp-for="ControlesPropuestos" class="form-control"></textarea>
+        <span asp-validation-for="ControlesPropuestos" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label>Responsable</label>
+        <label asp-for="Responsable"></label>
         <input asp-for="Responsable" class="form-control" />
+        <span asp-validation-for="Responsable" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn
+
+    <div class="form-group">
+        <label asp-for="FechaPropuesta"></label>
+        <input asp-for="FechaPropuesta" type="date" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Registrar Tratamiento</button>
+    <a asp-controller="Riesgos" asp-action="Details" asp-route-id="@Model.RiesgoId" class="btn btn-secondary">Volver</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

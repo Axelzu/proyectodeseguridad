@@ -10,7 +10,6 @@ namespace Proyecto.Data
 
         public DbSet<Activo> Activos { get; set; }
         public DbSet<Riesgo> Riesgos { get; set; }
-
-        public DbSet<Control> Controles => Set<Control>();
+        public DbSet<Control> Controles { get; set; }
     }
 }

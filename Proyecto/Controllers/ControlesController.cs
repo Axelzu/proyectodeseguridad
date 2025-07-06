@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proyecto.Data;
 using Proyecto.Models;
@@ -8,46 +9,49 @@ namespace Proyecto.Controllers
     public class ControlesController : Controller
     {
         private readonly AppDbContext _context;
+        public ControlesController(AppDbContext context) => _context = context;
 
-        public ControlesController(AppDbContext context)
+        // GET: Tratamientos/Create
+        public IActionResult Create(int? riesgoId)
         {
-            _context = context;
-        }
+            ViewBag.Riesgos = new SelectList(
+                _context.Riesgos.Include(r => r.Activo)
+                                .Select(r => new { r.Id, Desc = $"{r.Activo.Nombre} – {r.Amenaza}" }),
+                "Id", "Desc", riesgoId);
 
-        public async Task<IActionResult> Index()
-        {
-            var controles = _context.Controles.Include(c => c.Riesgo).ThenInclude(r => r.Activo);
-            return View(await controles.ToListAsync());
-        }
+            ViewBag.Estrategias = new SelectList(
+                Enum.GetValues(typeof(EstrategiaRespuesta))
+                    .Cast<EstrategiaRespuesta>()
+                    .Select(e => new { Value = e, Text = e.ToString() }),
+                "Value", "Text");
 
-        public IActionResult Create()
-        {
-            ViewBag.Riesgos = _context.Riesgos.Include(r => r.Activo).ToList();
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(Control control)
+        // POST: Tratamientos/Create
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Control model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(control);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // volver a cargar dropdowns
+                return Create(model.RiesgoId);
             }
-            ViewBag.Riesgos = _context.Riesgos.Include(r => r.Activo).ToList();
-            return View(control);
+
+            _context.Controles.Add(model);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Riesgos", new { id = model.RiesgoId });
         }
 
-        public async Task<IActionResult> Delete(int id)
+        // GET: Tratamientos/Index/{riesgoId}
+        public async Task<IActionResult> Index(int riesgoId)
         {
-            var control = await _context.Controles.FindAsync(id);
-            if (control != null)
-            {
-                _context.Controles.Remove(control);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
+            ViewBag.RiesgoId = riesgoId;
+            var lista = await _context.Controles
+                .Where(t => t.RiesgoId == riesgoId)
+                .ToListAsync();
+            return View(lista);
         }
     }
 }
