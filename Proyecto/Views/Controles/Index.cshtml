@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Proyecto.Models.Control>
+
+@{
+    ViewData["Title"] = "Tratamientos del Riesgo";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="Create"
+       asp-route-riesgoId="@ViewBag.RiesgoId"
+       class="btn btn-primary">
+        Nuevo Tratamiento
+    </a>
+    <a asp-controller="Riesgos"
+       asp-action="Details"
+       asp-route-id="@ViewBag.RiesgoId"
+       class="btn btn-secondary">
+        Volver a Riesgo
+    </a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Estrategia</th>
+            <th>Control Propuesto</th>
+            <th>Resp.</th>
+            <th>Fecha</th>
+            <th>Efec. Prob.</th>
+            <th>Efec. Impacto</th>
+            <th>Prob. Residual</th>
+            <th>Imp. Residual</th>
+            <th>Nivel Residual</th>
+            <th>Clasificación</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Estrategia</td>
+                <td>@c.ControlesPropuestos</td>
+                <td>@c.Responsable</td>
+                <td>@c.FechaPropuesta.ToShortDateString()</td>
+                <td>@c.EfectividadProbabilidad</td>
+                <td>@c.EfectividadImpacto</td>
+                <td>@c.ProbabilidadResidual</td>
+                <td>@c.ImpactoResidual</td>
+                <td>@c.NivelRiesgoResidual</td>
+                <td>@c.ClasificacionResidual</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@c.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@c.Id">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
