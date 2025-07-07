@@ -20,30 +20,19 @@ namespace Proyecto.Controllers
         // GET: Riesgos
         public async Task<IActionResult> Index(string search, int page = 1, int pageSize = 10)
         {
-            // 1) Base query con Include
-            var query = _context.Riesgos
-                                .Include(r => r.Activo)
-                                .AsQueryable();
+            var query = _context.Riesgos.Include(r => r.Activo).AsQueryable();
 
-            // 2) Filtro
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(r =>
-                    r.Activo.Nombre.Contains(search) ||
-                    r.Amenaza.Contains(search));
+                query = query.Where(r => r.Activo.Nombre.Contains(search) || r.Amenaza.Contains(search));
             }
 
-            // 3) Conteo total
             var total = await query.CountAsync();
+            var items = await query.OrderBy(r => r.Id)
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
 
-            // 4) Paginación
-            var items = await query
-                .OrderBy(r => r.Id)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            // 5) Construir ViewModel
             var vm = new RiesgosIndexViewModel
             {
                 Riesgos = items,
@@ -55,7 +44,6 @@ namespace Proyecto.Controllers
 
             return View(vm);
         }
-
 
         // GET: Riesgos/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -73,8 +61,7 @@ namespace Proyecto.Controllers
         // GET: Riesgos/Create
         public IActionResult Create()
         {
-            ViewData["ActivoId"] =
-                new SelectList(_context.Activos, "Id", "Nombre");
+            CargarActivos();
             return View();
         }
 
@@ -85,8 +72,7 @@ namespace Proyecto.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewData["ActivoId"] =
-                    new SelectList(_context.Activos, "Id", "Nombre", riesgo.ActivoId);
+                CargarActivos(riesgo.ActivoId);
                 return View(riesgo);
             }
 
@@ -103,15 +89,9 @@ namespace Proyecto.Controllers
             var riesgo = await _context.Riesgos.FindAsync(id.Value);
             if (riesgo == null) return NotFound();
 
-            ViewBag.Activos = new SelectList(
-                _context.Activos,
-                "Id",
-                "Nombre",
-                riesgo.ActivoId);
-
+            CargarActivos(riesgo.ActivoId);
             return View(riesgo);
         }
-
 
         // POST: Riesgos/Edit/5
         [HttpPost]
@@ -122,8 +102,7 @@ namespace Proyecto.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewData["ActivoId"] =
-                    new SelectList(_context.Activos, "Id", "Nombre", riesgo.ActivoId);
+                CargarActivos(riesgo.ActivoId);
                 return View(riesgo);
             }
 
@@ -172,6 +151,14 @@ namespace Proyecto.Controllers
         private bool RiesgoExists(int id)
         {
             return _context.Riesgos.Any(e => e.Id == id);
+        }
+
+        private void CargarActivos(int? selectedId = null)
+        {
+            var activos = _context.Activos
+                                   .OrderBy(a => a.Nombre)
+                                   .ToList();
+            ViewBag.Activos = new SelectList(activos, "Id", "Nombre", selectedId);
         }
     }
 }
