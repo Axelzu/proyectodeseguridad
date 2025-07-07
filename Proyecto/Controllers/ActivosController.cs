@@ -80,7 +80,7 @@ namespace Proyecto.Controllers
             if (!ModelState.IsValid)
                 return View(activo);
 
-            // Actualizamos solo los campos editables
+            // Actualizamos solo los campos permitidos
             activoDb.Nombre = activo.Nombre;
             activoDb.Descripcion = activo.Descripcion;
             activoDb.Categoria = activo.Categoria;
