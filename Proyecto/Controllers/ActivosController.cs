@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proyecto.Data;
 using Proyecto.Models;
@@ -11,7 +10,11 @@ namespace Proyecto.Controllers
     public class ActivosController : Controller
     {
         private readonly AppDbContext _context;
-        public ActivosController(AppDbContext context) => _context = context;
+
+        public ActivosController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         // GET: Activos
         public async Task<IActionResult> Index()
@@ -24,12 +27,17 @@ namespace Proyecto.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var activo = await _context.Activos.FindAsync(id);
-            if (activo == null) return NotFound();
+            if (activo == null)
+                return NotFound();
+
             return View(activo);
         }
 
         // GET: Activos/Create
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+            return View();
+        }
 
         // POST: Activos/Create
         [HttpPost]
@@ -57,20 +65,30 @@ namespace Proyecto.Controllers
             return View(activo);
         }
 
-        //Post: Activos/Edit/5
+        // POST: Activos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Categoria")] Activo activo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Descripcion,Categoria,Valor,ActivoDisponible")] Activo activo)
         {
             if (id != activo.Id)
+                return NotFound();
+
+            var activoDb = await _context.Activos.FindAsync(id);
+            if (activoDb == null)
                 return NotFound();
 
             if (!ModelState.IsValid)
                 return View(activo);
 
+            // Actualizamos solo los campos editables
+            activoDb.Nombre = activo.Nombre;
+            activoDb.Descripcion = activo.Descripcion;
+            activoDb.Categoria = activo.Categoria;
+            activoDb.Valor = activo.Valor;
+            activoDb.ActivoDisponible = activo.ActivoDisponible;
+
             try
             {
-                _context.Update(activo);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -84,17 +102,13 @@ namespace Proyecto.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ActivoExists(int id)
-        {
-            return _context.Activos.Any(e => e.Id == id);
-        }
-
-
         // GET: Activos/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var activo = await _context.Activos.FindAsync(id);
-            if (activo == null) return NotFound();
+            if (activo == null)
+                return NotFound();
+
             return View(activo);
         }
 
@@ -112,13 +126,9 @@ namespace Proyecto.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Helper para llenar ViewBag.ActivosList
-        private async Task PopulateActivosDropDown(int? selectedId)
+        private bool ActivoExists(int id)
         {
-            var lista = await _context.Activos
-                                     .OrderBy(a => a.Nombre)
-                                     .ToListAsync();
-            ViewBag.ActivosList = new SelectList(lista, "Id", "Nombre", selectedId);
+            return _context.Activos.Any(e => e.Id == id);
         }
     }
 }
