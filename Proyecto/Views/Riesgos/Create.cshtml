@@ -13,10 +13,12 @@
         <label asp-for="ActivoId" class="form-label"></label>
         <select asp-for="ActivoId"
                 asp-items="ViewBag.Activos"
-                class="form-select">
+                class="form-select"
+                aria-describedby="ActivoIdHelp">
             <option value="">-- Seleccione un activo --</option>
         </select>
         <span asp-validation-for="ActivoId" class="text-danger"></span>
+        <div id="ActivoIdHelp" class="form-text">Seleccione el activo relacionado al riesgo.</div>
     </div>
 
     <div class="mb-3">
