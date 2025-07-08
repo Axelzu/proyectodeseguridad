@@ -28,7 +28,7 @@ namespace Proyecto.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Debe seleccionar un activo")]
-        public int ActivoId { get; set; }
+        public int? ActivoId { get; set; }
 
         [ForeignKey(nameof(ActivoId))]
         public Activo Activo { get; set; }
@@ -38,7 +38,7 @@ namespace Proyecto.Models
         public string Amenaza { get; set; }
 
         [Required(ErrorMessage = "La vulnerabilidad es obligatoria")]
-        public NivelVulnerabilidad Vulnerabilidad { get; set; }
+        public NivelVulnerabilidad? Vulnerabilidad { get; set; }
 
         [StringLength(200)]
         public string ControlesExistentes { get; set; }

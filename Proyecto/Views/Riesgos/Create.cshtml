@@ -10,7 +10,6 @@
     @Html.AntiForgeryToken()
     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-    <!-- Mostrar “ID – Nombre” pero bindea solo al Id -->
     <div class="mb-3">
         <label asp-for="ActivoId" class="form-label"></label>
         <select asp-for="ActivoId"
@@ -21,7 +20,6 @@
         <span asp-validation-for="ActivoId" class="text-danger"></span>
     </div>
 
-    <!-- Resto de campos -->
     <div class="mb-3">
         <label asp-for="Amenaza" class="form-label"></label>
         <input asp-for="Amenaza" class="form-control" />
@@ -31,7 +29,7 @@
     <div class="mb-3">
         <label asp-for="Vulnerabilidad" class="form-label"></label>
         <select asp-for="Vulnerabilidad"
-                asp-items="Html.GetEnumSelectList<NivelVulnerabilidad>()"
+                asp-items="ViewBag.VulnerabilidadesList"
                 class="form-select">
             <option value="">-- Seleccione vulnerabilidad --</option>
         </select>

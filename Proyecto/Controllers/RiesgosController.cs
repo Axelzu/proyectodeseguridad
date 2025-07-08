@@ -13,23 +13,34 @@ namespace Proyecto.Controllers
         private readonly AppDbContext _context;
         public RiesgosController(AppDbContext context) => _context = context;
 
-        // Helper: carga ViewBag.ActivosList con items "Id – Nombre"
         private void PopulateActivosDropDown(int? selectedId = null)
         {
-            var items = _context.Activos
-                                .OrderBy(a => a.Id)
-                                .Select(a => new SelectListItem
-                                {
-                                    Value = a.Id.ToString(),
-                                    Text = $"{a.Id} – {a.Nombre}",
-                                    Selected = (a.Id == selectedId)
-                                })
-                                .ToList();
-
-            ViewBag.ActivosList = items;
+            ViewBag.ActivosList = _context.Activos
+                .OrderBy(a => a.Nombre)
+                .Select(a => new SelectListItem
+                {
+                    Value = a.Id.ToString(),
+                    Text = a.Nombre,
+                    Selected = (a.Id == selectedId)
+                })
+                .ToList();
         }
 
-        // GET: Riesgos
+        private void PopulateVulnerabilidadesDropDown(NivelVulnerabilidad? selected = null)
+        {
+            var list = new SelectList(
+                System.Enum.GetValues(typeof(NivelVulnerabilidad))
+                    .Cast<NivelVulnerabilidad>()
+                    .Select(e => new { Value = e, Text = e.ToString().Replace("_", " ") }),
+                "Value",
+                "Text",
+                selected.HasValue ? selected.Value : (NivelVulnerabilidad?)null
+            );
+
+            ViewBag.VulnerabilidadesList = list;
+        }
+
+
         public async Task<IActionResult> Index(string search, int page = 1, int pageSize = 10)
         {
             var query = _context.Riesgos.Include(r => r.Activo).AsQueryable();
@@ -57,7 +68,6 @@ namespace Proyecto.Controllers
             return View(vm);
         }
 
-        // GET: Riesgos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -70,20 +80,20 @@ namespace Proyecto.Controllers
             return View(riesgo);
         }
 
-        // GET: Riesgos/Create
         public IActionResult Create()
         {
             PopulateActivosDropDown();
+            PopulateVulnerabilidadesDropDown();
             return View();
         }
 
-        // POST: Riesgos/Create
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Riesgo riesgo)
         {
             if (!ModelState.IsValid)
             {
                 PopulateActivosDropDown(riesgo.ActivoId);
+                PopulateVulnerabilidadesDropDown(riesgo.Vulnerabilidad);
                 return View(riesgo);
             }
 
@@ -92,7 +102,6 @@ namespace Proyecto.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Riesgos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -101,10 +110,10 @@ namespace Proyecto.Controllers
             if (riesgo == null) return NotFound();
 
             PopulateActivosDropDown(riesgo.ActivoId);
+            PopulateVulnerabilidadesDropDown(riesgo.Vulnerabilidad);
             return View(riesgo);
         }
 
-        // POST: Riesgos/Edit/5
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Riesgo riesgo)
         {
@@ -113,6 +122,7 @@ namespace Proyecto.Controllers
             if (!ModelState.IsValid)
             {
                 PopulateActivosDropDown(riesgo.ActivoId);
+                PopulateVulnerabilidadesDropDown(riesgo.Vulnerabilidad);
                 return View(riesgo);
             }
 
@@ -121,7 +131,6 @@ namespace Proyecto.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Riesgos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -134,7 +143,6 @@ namespace Proyecto.Controllers
             return View(riesgo);
         }
 
-        // POST: Riesgos/Delete/5
         [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
