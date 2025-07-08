@@ -8,19 +8,20 @@
 
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
+    <!-- Mostrar “ID – Nombre” pero bindea solo al Id -->
     <div class="mb-3">
         <label asp-for="ActivoId" class="form-label"></label>
         <select asp-for="ActivoId"
-                asp-items="ViewBag.Activos"
-                class="form-select"
-                aria-describedby="ActivoIdHelp">
-            <option value="">-- Seleccione un activo --</option>
+                asp-items="ViewBag.ActivosList"
+                class="form-select">
+            <option value="">-- Seleccione activo --</option>
         </select>
         <span asp-validation-for="ActivoId" class="text-danger"></span>
-        <div id="ActivoIdHelp" class="form-text">Seleccione el activo relacionado al riesgo.</div>
     </div>
 
+    <!-- Resto de campos -->
     <div class="mb-3">
         <label asp-for="Amenaza" class="form-label"></label>
         <input asp-for="Amenaza" class="form-control" />
@@ -29,30 +30,34 @@
 
     <div class="mb-3">
         <label asp-for="Vulnerabilidad" class="form-label"></label>
-        <input asp-for="Vulnerabilidad" class="form-control" />
+        <select asp-for="Vulnerabilidad"
+                asp-items="Html.GetEnumSelectList<NivelVulnerabilidad>()"
+                class="form-select">
+            <option value="">-- Seleccione vulnerabilidad --</option>
+        </select>
         <span asp-validation-for="Vulnerabilidad" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="ControlesExistentes" class="form-label"></label>
-        <textarea asp-for="ControlesExistentes" class="form-control"></textarea>
+        <textarea asp-for="ControlesExistentes" class="form-control" rows="3"></textarea>
         <span asp-validation-for="ControlesExistentes" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="Probabilidad" class="form-label"></label>
-        <input asp-for="Probabilidad" type="number" step="0.01" lang="en" class="form-control" />
+        <input asp-for="Probabilidad" type="number" step="0.01" class="form-control" />
         <span asp-validation-for="Probabilidad" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="Impacto" class="form-label"></label>
-        <input asp-for="Impacto" type="number" step="0.01" lang="en" class="form-control" />
+        <input asp-for="Impacto" type="number" step="0.01" class="form-control" />
         <span asp-validation-for="Impacto" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-success">Guardar</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Volver al listado</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
 </form>
 
 @section Scripts {

@@ -1,20 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proyecto.Data;
 using Proyecto.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Proyecto.Controllers
 {
     public class RiesgosController : Controller
     {
         private readonly AppDbContext _context;
+        public RiesgosController(AppDbContext context) => _context = context;
 
-        public RiesgosController(AppDbContext context)
+        // Helper: carga ViewBag.ActivosList con items "Id – Nombre"
+        private void PopulateActivosDropDown(int? selectedId = null)
         {
-            _context = context;
+            var items = _context.Activos
+                                .OrderBy(a => a.Id)
+                                .Select(a => new SelectListItem
+                                {
+                                    Value = a.Id.ToString(),
+                                    Text = $"{a.Id} – {a.Nombre}",
+                                    Selected = (a.Id == selectedId)
+                                })
+                                .ToList();
+
+            ViewBag.ActivosList = items;
         }
 
         // GET: Riesgos
@@ -23,15 +35,16 @@ namespace Proyecto.Controllers
             var query = _context.Riesgos.Include(r => r.Activo).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
-            {
-                query = query.Where(r => r.Activo.Nombre.Contains(search) || r.Amenaza.Contains(search));
-            }
+                query = query.Where(r =>
+                    r.Activo.Nombre.Contains(search) ||
+                    r.Amenaza.Contains(search));
 
             var total = await query.CountAsync();
-            var items = await query.OrderBy(r => r.Id)
-                                    .Skip((page - 1) * pageSize)
-                                    .Take(pageSize)
-                                    .ToListAsync();
+            var items = await query
+                .OrderBy(r => r.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
             var vm = new RiesgosIndexViewModel
             {
@@ -41,7 +54,6 @@ namespace Proyecto.Controllers
                 TotalItems = total,
                 Search = search
             };
-
             return View(vm);
         }
 
@@ -51,32 +63,31 @@ namespace Proyecto.Controllers
             if (id == null) return NotFound();
 
             var riesgo = await _context.Riesgos
-                                       .Include(r => r.Activo)
-                                       .FirstOrDefaultAsync(r => r.Id == id.Value);
-            if (riesgo == null) return NotFound();
+                .Include(r => r.Activo)
+                .FirstOrDefaultAsync(r => r.Id == id.Value);
 
+            if (riesgo == null) return NotFound();
             return View(riesgo);
         }
 
         // GET: Riesgos/Create
         public IActionResult Create()
         {
-            CargarActivos();
+            PopulateActivosDropDown();
             return View();
         }
 
         // POST: Riesgos/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Riesgo riesgo)
         {
             if (!ModelState.IsValid)
             {
-                CargarActivos(riesgo.ActivoId);
+                PopulateActivosDropDown(riesgo.ActivoId);
                 return View(riesgo);
             }
 
-            _context.Add(riesgo);
+            _context.Riesgos.Add(riesgo);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -89,35 +100,24 @@ namespace Proyecto.Controllers
             var riesgo = await _context.Riesgos.FindAsync(id.Value);
             if (riesgo == null) return NotFound();
 
-            CargarActivos(riesgo.ActivoId);
+            PopulateActivosDropDown(riesgo.ActivoId);
             return View(riesgo);
         }
 
         // POST: Riesgos/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Riesgo riesgo)
         {
             if (id != riesgo.Id) return NotFound();
 
             if (!ModelState.IsValid)
             {
-                CargarActivos(riesgo.ActivoId);
+                PopulateActivosDropDown(riesgo.ActivoId);
                 return View(riesgo);
             }
 
-            try
-            {
-                _context.Update(riesgo);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RiesgoExists(riesgo.Id))
-                    return NotFound();
-                else
-                    throw;
-            }
+            _context.Riesgos.Update(riesgo);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -127,16 +127,15 @@ namespace Proyecto.Controllers
             if (id == null) return NotFound();
 
             var riesgo = await _context.Riesgos
-                                       .Include(r => r.Activo)
-                                       .FirstOrDefaultAsync(r => r.Id == id.Value);
-            if (riesgo == null) return NotFound();
+                .Include(r => r.Activo)
+                .FirstOrDefaultAsync(r => r.Id == id.Value);
 
+            if (riesgo == null) return NotFound();
             return View(riesgo);
         }
 
         // POST: Riesgos/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var riesgo = await _context.Riesgos.FindAsync(id);
@@ -146,19 +145,6 @@ namespace Proyecto.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool RiesgoExists(int id)
-        {
-            return _context.Riesgos.Any(e => e.Id == id);
-        }
-
-        private void CargarActivos(int? selectedId = null)
-        {
-            var activos = _context.Activos
-                                   .OrderBy(a => a.Nombre)
-                                   .ToList();
-            ViewBag.Activos = new SelectList(activos, "Id", "Nombre", selectedId);
         }
     }
 }

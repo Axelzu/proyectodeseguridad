@@ -6,15 +6,15 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<form method="get" class="row g-2 mb-3">
+<form asp-action="Index" method="get" class="row g-2 mb-3">
     <div class="col-auto">
-        <input type="text"
+        <input asp-for="Search"
                name="search"
-               value="@Model.Search"
                class="form-control"
                placeholder="Buscar por activo o amenaza" />
     </div>
     <div class="col-auto">
+        <input type="hidden" asp-for="PageSize" />
         <button type="submit" class="btn btn-outline-secondary">
             Filtrar
         </button>
@@ -23,7 +23,9 @@
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Nuevo Riesgo</a>
-    <a asp-controller="Reports" asp-action="RiesgosCsv" class="btn btn-info ms-2">
+    <a asp-controller="Reports"
+       asp-action="RiesgosCsv"
+       class="btn btn-info ms-2">
         Exportar CSV
     </a>
 </p>
@@ -44,20 +46,20 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Riesgos)
+        @foreach (var r in Model.Riesgos)
         {
             <tr>
-                <td>@item.Activo.Nombre</td>
-                <td>@item.Amenaza</td>
-                <td>@item.Vulnerabilidad</td>
-                <td>@item.Probabilidad</td>
-                <td>@item.Impacto</td>
-                <td>@item.NivelRiesgo</td>
-                <td>@item.ClasificacionRiesgo</td>
+                <td>@r.Activo.Nombre</td>
+                <td>@r.Amenaza</td>
+                <td>@r.Vulnerabilidad</td>
+                <td>@r.Probabilidad</td>
+                <td>@r.Impacto</td>
+                <td>@r.NivelRiesgo</td>
+                <td>@r.ClasificacionRiesgo</td>
                 <td>
                     <a asp-controller="Controles"
                        asp-action="Index"
-                       asp-route-riesgoId="@item.Id"
+                       asp-route-riesgoId="@r.Id"
                        class="btn btn-sm btn-outline-secondary">
                         Ver
                     </a>
@@ -65,15 +67,15 @@
                 <td>
                     <a asp-controller="Observaciones"
                        asp-action="Index"
-                       asp-route-r="@item.Id"
+                       asp-route-r="@r.Id"
                        class="btn btn-sm btn-outline-secondary">
                         Ver
                     </a>
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Ver</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    <a asp-action="Details" asp-route-id="@r.Id">Ver</a> |
+                    <a asp-action="Edit" asp-route-id="@r.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@r.Id">Eliminar</a>
                 </td>
             </tr>
         }
@@ -83,13 +85,20 @@
 <nav>
     <ul class="pagination">
         <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-            <a class="page-link" href="?search=@Model.Search&page=1">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-page="1"
+               asp-route-pageSize="@Model.PageSize"
+               asp-route-search="@Model.Search">
                 « Primera
             </a>
         </li>
         <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
             <a class="page-link"
-               href="?search=@Model.Search&page=@(Model.PageNumber - 1)">
+               asp-action="Index"
+               asp-route-page="@(Model.PageNumber - 1)"
+               asp-route-pageSize="@Model.PageSize"
+               asp-route-search="@Model.Search">
                 ‹ Anterior
             </a>
         </li>
@@ -97,7 +106,11 @@
         @for (int p = 1; p <= Model.TotalPages; p++)
         {
             <li class="page-item @(p == Model.PageNumber ? "active" : "")">
-                <a class="page-link" href="?search=@Model.Search&page=@p">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@p"
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-search="@Model.Search">
                     @p
                 </a>
             </li>
@@ -105,13 +118,19 @@
 
         <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
             <a class="page-link"
-               href="?search=@Model.Search&page=@(Model.PageNumber + 1)">
+               asp-action="Index"
+               asp-route-page="@(Model.PageNumber + 1)"
+               asp-route-pageSize="@Model.PageSize"
+               asp-route-search="@Model.Search">
                 Siguiente ›
             </a>
         </li>
         <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
             <a class="page-link"
-               href="?search=@Model.Search&page=@Model.TotalPages">
+               asp-action="Index"
+               asp-route-page="@Model.TotalPages"
+               asp-route-pageSize="@Model.PageSize"
+               asp-route-search="@Model.Search">
                 Última »
             </a>
         </li>

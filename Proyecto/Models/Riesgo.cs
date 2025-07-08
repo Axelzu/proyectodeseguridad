@@ -4,6 +4,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Proyecto.Models
 {
+    public enum NivelVulnerabilidad
+    {
+        [Display(Name = "Muy baja")]
+        Muy_Baja,
+
+        [Display(Name = "Baja")]
+        Baja,
+
+        [Display(Name = "Media")]
+        Media,
+
+        [Display(Name = "Alta")]
+        Alta,
+
+        [Display(Name = "Muy alta")]
+        Muy_Alta
+    }
+
     public class Riesgo
     {
         [Key]
@@ -20,8 +38,7 @@ namespace Proyecto.Models
         public string Amenaza { get; set; }
 
         [Required(ErrorMessage = "La vulnerabilidad es obligatoria")]
-        [StringLength(100)]
-        public string Vulnerabilidad { get; set; }
+        public NivelVulnerabilidad Vulnerabilidad { get; set; }
 
         [StringLength(200)]
         public string ControlesExistentes { get; set; }
@@ -50,7 +67,6 @@ namespace Proyecto.Models
             }
         }
 
-        // Navegaciones a los controles aplicados (tratamientos) y observaciones
         public ICollection<Control> Controles { get; set; } = new List<Control>();
         public ICollection<Observacion> Observaciones { get; set; } = new List<Observacion>();
     }
